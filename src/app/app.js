@@ -7,7 +7,7 @@ export const customersApi= axios.create(
 );
 
 export const getCustomerList= ()=>{
-    return customersApi.get(`/customer`);
+    return customersApi.get(`/customers`);
 };
 
 export const deleteCustomer= (customer)=> {

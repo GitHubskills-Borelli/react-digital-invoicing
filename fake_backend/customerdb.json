@@ -1,27 +1,27 @@
 {
   "customers": [
     {
-      "id": 1,
-      "name": "name1",
-      "email": "email1",
-      "phone": "phone1",
-      "address": "address1",
-      "checked": true
-    },
-    {
-      "id": 2,
-      "name": "name2",
-      "email": "email2",
-      "phone": "phone2",
-      "address": "address2",
-      "checked": false
-    },
-    {
       "id": 3,
       "name": "name3",
       "email": "email3",
       "phone": "phone3",
       "address": "address3",
+      "checked": true
+    },
+    {
+      "id": 4,
+      "name": "name4",
+      "email": "email4",
+      "phone": "phone4",
+      "address": "address4",
+      "checked": true
+    },
+    {
+      "id": 5,
+      "name": "name5",
+      "email": "email5",
+      "phone": "phone5",
+      "address": "address5",
       "checked": true
     }
   ]
