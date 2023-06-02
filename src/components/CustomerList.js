@@ -76,7 +76,7 @@ export default function CustomerList() {
                                 {
                                     customerList.map(
                                         (customer) => (
-                                            <tr key={customer.custId}>
+                                            <tr key={customer.id}>
                                                 <td>{customer.name}</td>
                                                 <td>{customer.email}</td>
                                                 <td>{customer.phone}</td>

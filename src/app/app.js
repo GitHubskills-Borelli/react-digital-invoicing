@@ -2,16 +2,16 @@ import axios from "axios";
 
 export const customersApi= axios.create(
     {
-        baseURL: "http://localhost:8090/api",
+        baseURL: "http://localhost:8090",
     }
 );
 
 export const getCustomerList= ()=>{
-    return customersApi.get(`/customer/lists`);
+    return customersApi.get(`/customer`);
 };
 
 export const deleteCustomer= (customer)=> {
-    return customersApi.delete(`/customer/delete/${customer.custId}`);
+    return customersApi.delete(`/customers/${customer.id}`);
 };
 
 export const getCustomer= (id)=> {
