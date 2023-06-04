@@ -1,20 +1,36 @@
-import { faCheckCircle, faCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faCircle, faEdit, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useState } from 'react'
-import { checkCustomer, deleteCustomer, getCustomerList } from '../app/app';
+import React, { useContext, useEffect, useState } from 'react'
+import { AppContext, checkCustomer, deleteCustomer, getCustomerList } from '../app/app';
+import { useNavigate } from 'react-router-dom';
 
 export default function CustomerList() {
-    const [customerList, setCustomerList]= useState([]);
-
+    const navigate= useNavigate();
+    const [query, setQuery]= useState("");
+    const [customersState, setCustomersState]= useContext(AppContext)
     useEffect(()=>{
-        handleGetCustomerList();
+        handleGetCustomerList( 
+            customersState.keyword,
+            customersState.currentPage,
+            customersState.pageSize);
     }, []);
 
-    const handleGetCustomerList=()=>{
-        getCustomerList()
+    const handleGetCustomerList=(keyword, page, size)=>{
+        getCustomerList(keyword, page, size)
         .then(
             (resp)=>{
-                setCustomerList(resp.data);
+                const totalElements= resp.headers["x-total-count"];
+                let totalPages= Math.floor(totalElements/size);
+                if(totalElements % size != 0) ++totalPages;
+                setCustomersState({
+                    ...customersState,
+                    customers:resp.data,
+                    keyword:keyword,
+                    currentPage:page,
+                    pageSize: size,
+                    totalPages: totalPages
+                }
+                );
             }
         ).catch(
             (err)=>{
@@ -26,8 +42,8 @@ export default function CustomerList() {
     const handleDeleteCustomer= (customer)=>{
         deleteCustomer(customer).then(
             (resp)=> {
-                const newCustomerList= customerList.filter(cust => cust.id != customer.id);
-                setCustomerList(newCustomerList);
+                const newCustomerList= customersState.customers.filter(cust => cust.id != customer.id);
+                setCustomersState({...customersState, customers:newCustomerList});
             }
         ).catch(
             (err)=>{
@@ -39,14 +55,14 @@ export default function CustomerList() {
     const handleCheckCustomer= (customer)=>{
         checkCustomer(customer).then(
             (resp)=>{
-                const newCustomerList= customerList.map(
+                const newCustomerList= customersState.customers.map(
                     (cust)=> {
                         if(cust.id == customer.id){
                             cust.checked= !cust.checked;
                         } return cust;
                     } 
                 );
-                setCustomerList(newCustomerList);
+                setCustomersState({...customersState, customers:newCustomerList});
             }
         ).catch(
             (err)=>{
@@ -55,10 +71,41 @@ export default function CustomerList() {
         );
     }
 
+    const handleGotoPage= (page)=> (
+        handleGetCustomerList(
+            customersState.keyword, 
+            page, 
+            customersState.pageSize)
+    );
+
+    const handleSearch= (event)=> {
+        event.preventDefault();
+        handleGetCustomerList(query, 1, customersState.pageSize);
+    };
+
   return (
     <div className='p-1 m-1'>
         <div className='row'>
             <div className='col-md-6'>
+            <div className='card m-2'>
+                <div className='card-body'>
+                    <form onSubmit={handleSearch}>
+                        <div className='row g-2'>
+                            <div className='col-auto'>
+                                <input 
+                                onChange={(e)=> setQuery(e.target.value)}
+                                value={query}
+                                className='form-control'></input>
+                            </div>
+                            <div className='col-auto'>
+                                <button className='btn btn-success'>
+                                    <FontAwesomeIcon icon={faSearch}></FontAwesomeIcon>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
                 <div className='card'>
                     <div className='card-body'>
                         <table className='table'>
@@ -74,12 +121,13 @@ export default function CustomerList() {
                             </thead>
                             <tbody>
                                 {
-                                    customerList.map(
+                                    customersState.customers.map(
                                         (customer) => (
                                             <tr key={customer.id}>
                                                 <td>{customer.name}</td>
                                                 <td>{customer.email}</td>
                                                 <td>{customer.phone}</td>
+                                                <td>{customer.address}</td>
                                                 <td>
                                                     <button onClick={()=>handleCheckCustomer(customer)} className='btn btn-outline-success'>
                                                         <FontAwesomeIcon 
@@ -96,12 +144,38 @@ export default function CustomerList() {
                                                         <FontAwesomeIcon icon={faTrash}></FontAwesomeIcon>
                                                     </button>
                                                 </td>
+                                                <td>
+                                                    <button 
+                                                    onClick={()=> navigate(`/updateCustomer/${customer.id}`)}
+                                                    className='btn btn-outline-success'>
+                                                        <FontAwesomeIcon icon={faEdit}></FontAwesomeIcon>
+                                                    </button>
+                                                </td>
                                             </tr>
                                         )                                         
                                     )
                                 }
                             </tbody>
                         </table>
+                        <ul className='nav nav-pills'>
+                            {
+                                new Array(customersState.totalPages).fill(0).map(
+                                    (v,index)=> (
+                                        <li key={index+1}>
+                                        <button
+                                            onClick={(()=> handleGotoPage(index+1))}
+                                            className={
+                                                index +1 == customersState.currentPage
+                                                ? "btn btn-info ms-1"
+                                                : "btn btn-outline-info ms-1"
+                                            }>
+                                                {index +1}
+                                        </button>
+                                        </li>
+                                    )
+                                )
+                            }
+                        </ul>
                     </div>
                 </div>
             </div>

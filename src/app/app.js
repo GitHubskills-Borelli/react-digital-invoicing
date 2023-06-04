@@ -1,4 +1,6 @@
 import axios from "axios";
+import { createContext, useState } from "react";
+
 
 export const customersApi= axios.create(
     {
@@ -6,15 +8,16 @@ export const customersApi= axios.create(
     }
 );
 
-export const getCustomerList= ()=>{
-    return customersApi.get(`/customers`);
+export const getCustomerList= (keyword="", page=1, size=3)=>{
+    return customersApi.get(
+        `/customers?name_like=${keyword}&_page=${page}&_limit=${size}`);
 };
 
 export const deleteCustomer= (customer)=> {
     return customersApi.delete(`/customers/${customer.id}`);
 };
 
-export const getCustomer= (id)=> {
+export const getCustomerById= (id)=> {
     return customersApi.get(`/customers/${id}`);
 };
 
@@ -29,3 +32,16 @@ export const checkCustomer= (customer)=> {
 export const updateCustomer= (customer)=> {
     return customersApi.put(`/customers/${customer.id}`, customer);
 };
+
+export const AppContext= createContext();
+export const useAppState= ()=> {
+    const initialState={
+        customers: [],
+        currentPage: 1,
+        pageSize: 3,
+        keyword:"",
+        totalPages: 0
+    };
+    const appState= useState(initialState);
+    return appState;
+}

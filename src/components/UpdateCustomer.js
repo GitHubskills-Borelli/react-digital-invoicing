@@ -1,19 +1,38 @@
-import React, { useState } from 'react'
-import {createCustomer} from '../app/app'
+import React, { useEffect, useState } from 'react'
+import { getCustomerById, updateCustomer} from '../app/app'
+import { useParams } from 'react-router-dom';
 
-export default function CreateCustomer() {
+export default function UpdateCustomer() {
+  const {id}= useParams();
   const [name, setName]= useState("");
   const [email, setEmail]= useState("");
   const [Phone, setPhone]= useState("");
   const [address, setAddress]= useState("");
   const [checked, setChecked]= useState(false);
 
-  const handleCreateCustomer= (event)=> {
+  useEffect(()=> {
+    handleGetCustomerById(id);
+  }, []);
+  
+  const handleUpdateCustomer= (event)=> {
     event.preventDefault();
-    let customer= { name, email, Phone,address, checked};
-    createCustomer(customer).then(
+    let customer= {id, name, email, Phone,address, checked};
+    updateCustomer(customer).then(
       (resp)=> {alert(JSON.stringify(resp.data));}
     );
+  }
+
+  const handleGetCustomerById= (id)=> {
+    getCustomerById(id).then(
+      (resp)=> {
+        let customer= resp.data;
+        setName(customer.name);
+        setEmail(customer.email);
+        setPhone(customer.Phone);
+        setAddress(customer.address);
+        setChecked(customer.checked);
+      }
+    )
   }
 
   return (
@@ -21,7 +40,7 @@ export default function CreateCustomer() {
       <div className='col-md-6'>
         <div className='card'>
           <div className='card-body'>
-            <form onSubmit={handleCreateCustomer}>
+            <form onSubmit={handleUpdateCustomer}>
               <div className='mb-3'>
                 <label className='form-label'>Name:</label>
                 <input 
