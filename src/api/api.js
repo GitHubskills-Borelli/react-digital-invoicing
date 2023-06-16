@@ -1,5 +1,4 @@
 import axios from "axios";
-import { createContext, useState } from "react";
 
 
 export const customersApi= axios.create(
@@ -33,7 +32,7 @@ export const updateCustomer= (customer)=> {
     return customersApi.put(`/customers/${customer.id}`, customer);
 };
 
-export const AppContext= createContext();
+/* export const AppContext= createContext();
 export const useAppState= ()=> {
     const initialState={
         customers: [],
@@ -44,4 +43,4 @@ export const useAppState= ()=> {
     };
     const appState= useState(initialState);
     return appState;
-}
+} */

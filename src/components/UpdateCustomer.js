@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getCustomerById, updateCustomer} from '../app/app'
+import { getCustomerById, updateCustomer} from '../api/api'
 import { useParams } from 'react-router-dom';
 
 export default function UpdateCustomer() {
@@ -72,7 +72,7 @@ export default function UpdateCustomer() {
               <div className='form-check'>
                 <input 
                 onChange={(e)=> setChecked(e.target.value)}
-                checked={checked=="on"?true:false}
+                checked={checked==="on"?true:false}
                 className='form-check-input' type='checkbox'></input>
                 <label className='forme-check-label' htmlFor="flexCheckChecked"></label>
                 Checked

@@ -1,13 +1,14 @@
-import { faCheckCircle, faCircle, faEdit, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle, faCircle, faEdit, faPrint, faSearch, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useContext, useEffect, useState } from 'react'
-import { AppContext, checkCustomer, deleteCustomer, getCustomerList } from '../app/app';
+import { checkCustomer, deleteCustomer, getCustomerList } from '../api/api';
 import { useNavigate } from 'react-router-dom';
+import { CustomersContext } from '../context/context';
 
 export default function CustomerList() {
     const navigate= useNavigate();
     const [query, setQuery]= useState("");
-    const [customersState, setCustomersState]= useContext(AppContext)
+    const [customersState, setCustomersState]= useContext(CustomersContext)
     useEffect(()=>{
         handleGetCustomerList( 
             customersState.keyword,
@@ -21,7 +22,7 @@ export default function CustomerList() {
             (resp)=>{
                 const totalElements= resp.headers["x-total-count"];
                 let totalPages= Math.floor(totalElements/size);
-                if(totalElements % size != 0) ++totalPages;
+                if(totalElements % size !== 0) ++totalPages;
                 setCustomersState({
                     ...customersState,
                     customers:resp.data,
@@ -42,7 +43,7 @@ export default function CustomerList() {
     const handleDeleteCustomer= (customer)=>{
         deleteCustomer(customer).then(
             (resp)=> {
-                const newCustomerList= customersState.customers.filter(cust => cust.id != customer.id);
+                const newCustomerList= customersState.customers.filter(cust => cust.id !== customer.id);
                 setCustomersState({...customersState, customers:newCustomerList});
             }
         ).catch(
@@ -57,7 +58,7 @@ export default function CustomerList() {
             (resp)=>{
                 const newCustomerList= customersState.customers.map(
                     (cust)=> {
-                        if(cust.id == customer.id){
+                        if(cust.id === customer.id){
                             cust.checked= !cust.checked;
                         } return cust;
                     } 
@@ -84,7 +85,7 @@ export default function CustomerList() {
     };
 
   return (
-    <div className='p-1 m-1'>
+    <div className=' p-1 m-1'>
         <div className='row'>
             <div className='col-md-6'>
             <div className='card m-2'>
@@ -104,6 +105,11 @@ export default function CustomerList() {
                             </div>
                         </div>
                     </form>
+                    <div className='d-flex justify-content-end'>
+                        <button className='btn btn-success'>
+                            <FontAwesomeIcon icon={faPrint}></FontAwesomeIcon>
+                        </button>
+                    </div>
                 </div>
             </div>
                 <div className='card'>
@@ -165,7 +171,7 @@ export default function CustomerList() {
                                         <button
                                             onClick={(()=> handleGotoPage(index+1))}
                                             className={
-                                                index +1 == customersState.currentPage
+                                                index +1 === customersState.currentPage
                                                 ? "btn btn-info ms-1"
                                                 : "btn btn-outline-info ms-1"
                                             }>

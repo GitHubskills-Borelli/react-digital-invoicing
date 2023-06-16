@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {createCustomer} from '../app/app'
+import {createCustomer} from '../api/api'
 
 export default function CreateCustomer() {
   const [name, setName]= useState("");
@@ -53,7 +53,7 @@ export default function CreateCustomer() {
               <div className='form-check'>
                 <input 
                 onChange={(e)=> setChecked(e.target.value)}
-                checked={checked=="on"?true:false}
+                checked={checked==="on"?true:false}
                 className='form-check-input' type='checkbox'></input>
                 <label className='forme-check-label' htmlFor="flexCheckChecked"></label>
                 Checked
